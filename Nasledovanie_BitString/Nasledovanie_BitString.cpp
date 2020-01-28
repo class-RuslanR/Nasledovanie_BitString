@@ -7,8 +7,8 @@ using namespace std;
 class String
 {
 protected:
-	char *str;
 	int length;
+	char *str;
 public:
 	String();
 	String(char *strLiter);
@@ -21,14 +21,27 @@ public:
 
 String::String()
 {
-	str = 0;
+	str = new char;
+	str[0] = '\0';
+	length = 0;
 }
 
 String::String(char * strLiter)
 {
 	length = strlen(strLiter);
-	str = new char[length];
-	strcpy(str, strLiter);
+	char *str = new char[length];
+	for (int i = 0; strLiter[i] != '\0'; i++)
+	{
+		if (strLiter[i] != '0' && strLiter[i] != '1')
+		{
+			strLiter[i] = '0';
+		}
+	}
+	for (int i = 0; i != '\0'; i++)
+	{
+		str[i] = strLiter[i];
+	}
+	//strcpy(str, strLiter);
 }
 
 String::String(char symbol)
@@ -69,19 +82,14 @@ class StringBit : public String
 {
 public:
 	StringBit();
-	StringBit(char*strLiter) : String(strLiter)
+	StringBit(char *strLiter) : String(strLiter)
 	{
-		for (int i = 0; str[i] != '\0'; i++)
-		{
-			if (str[i] != '0' && str[i] != '1')
-			{
-				str[i] = '\0';
-			}
-		}
+		cout << "Бинарная строка: ";
 	}
 	~StringBit();
 	char * changeNeg_or_Pos();
-	StringBit operator + (StringBit & str2);
+	//StringBit operator = (StringBit & str2);
+	//StringBit operator + (StringBit & str2);
 };
 
 StringBit::StringBit()
@@ -123,17 +131,31 @@ char * StringBit::changeNeg_or_Pos()
 	}
 }
 
-StringBit StringBit::operator+(StringBit & str2)
+/*StringBit StringBit::operator=(StringBit & str2)
 {
 	return StringBit();
 }
 
-
+StringBit StringBit::operator+(StringBit & str2)
+{
+		if (this == &str2)
+		{
+			return *this;
+		}
+		strcpy(str2.Data());
+		return *this;
+}
+*/
+StringBit *a;
 
 int main()
 {
 	setlocale(LC_ALL, "ru");
-
+	StringBit s1;
+	s1.ShowString();
+	char stroka[] = "0101";
+	StringBit s2(stroka);
+	s2.ShowString();
 
 
 	system("pause");
