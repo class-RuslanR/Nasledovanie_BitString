@@ -1,7 +1,10 @@
 ﻿#include "pch.h"
 #include <iostream>
-#include <cstring>
+#include <string.h>
+#include <string>
 #include <cstdlib>
+#include <stdlib.h>
+#define _CRT_SECURE_NO_WARNING
 
 using namespace std;
 
@@ -43,14 +46,27 @@ String::String(char symbol)
 
 void String::setStr(char * strLiter)
 {
-	str = new char[10];
-	strcpy(str, strLiter);
+	str = new char[length];
+	for (int i = 0; i < length; i++)
+	{
+		if (strLiter[i] != '0' && strLiter[i] != '1')
+		{
+			str[i] = '0';
+		}
+		else
+		{
+			str[i] = strLiter[i];
+		}
+	}
+	//strcpy(str, strLiter);
+	//strcpy_s(str, _countof(str), strLiter);
 }
 
 char * String::getStr()
 {
 	cout << "Введите бинарную строку: ";
 	cin >> str;
+	length = strlen(str);
 	setStr(str);
 	return str;
 }
@@ -69,20 +85,17 @@ void String::ClearString()
 
 void String::ShowString()
 {
-	cout <<"Бинарная строка: " << str << "\n";
-	/*for (int i = 0; i != '\0'; i++)
+	cout <<"Бинарная строка: " << "\n";
+	for (int i = 0; i < length; i++)
 	{
 		cout << str[i];
-	}*/
+	}
+	cout << "\n\n";
 }
 
 String::~String()
 {
-	if (str)
-	{
-		delete str;
-		str = 0;
-	}
+
 }
 
 class StringBit : public String
@@ -95,7 +108,7 @@ public:
 		{
 			if (strLiter[i] != '0' && strLiter[i] != '1')
 			{
-				strLiter[i] = '0';
+				str[i] = '0';
 			}
 			else
 			{
@@ -108,11 +121,11 @@ public:
 		}
 	}
 	~StringBit();
-	
 	char * changeNeg_or_Pos();
 	StringBit operator = (StringBit & str2); 
 	int SumStr(char * str1, char * str2);
-	bool operator== (StringBit & str2);
+	bool operator== (StringBit str2);
+	void ShowStringPrisv();
 };
 
 StringBit::StringBit()
@@ -156,13 +169,30 @@ char * StringBit::changeNeg_or_Pos()
 
 StringBit StringBit::operator=(StringBit & str2)
 {
-	if (strlen(str2.str) > strlen(str))
+	if (strlen(str) != strlen(str2.str))
 	{
-		delete[]str;
-		str = new char[strlen(str2.str) + 1];
+		int count = 0;
+		delete str;
+		for (int i = 0; str2.str[i] != '\0'; i++)
+		{
+			if (str2.str[i] == '0' || str2.str[i] == '1')
+			{
+				count++;
+			}
+		}
+		for (int j = 0; j <= count; j++)
+		{
+			str[j] = str2.str[j];
+		}
 	}
-	//strcpy(str, str2.str);
-	return *this;
+	else
+	{
+		for (int i = 0; i <= length; i++)
+		{
+			str[i] = str2.str[i];
+		}
+	}
+	return str;
 }
 
 int StringBit:: SumStr(char * str1, char * str2)
@@ -182,41 +212,63 @@ int StringBit:: SumStr(char * str1, char * str2)
 		strToint_2 /= 10;
 	}
 	temp = sum1 + sum2;
+	cout << "Сумма чисел строк= " << temp << "\n\n";
 	return temp;
 }
 
-bool StringBit::operator==(StringBit &str2)
+bool StringBit::operator== (StringBit str2)
 {
-	if (strcmp(str, str2.str) == 0)
+	if (strlen(str) == strlen(str2.str))
 	{
-		cout << "Строки одинаковы!" << endl;
-		return true;
+		for (int i = 0; i < length; i++)
+		{
+			if (str[i] == str2.str[i])
+			{
+				cout << "Строки одинаковы!" << "\n" << endl;
+				return true;
+			}
+			else
+			{
+				cout << "Cтроки не равны" << "\n" << endl;
+				return false;
+			}
+		}
 	}
 	else
 	{
-		cout << "Cтроки не равны" << endl;
+		cout << "Cтроки не равны" << "\n" << endl;
 		return false;
 	}
+}
+
+void StringBit::ShowStringPrisv()
+{
+	cout << "Бинарная строка: " << "\n";
+	int count = 0;
+	for (int i = 0; str[i] != '\0'; i++)
+	{
+		if (str[i] == '0' || str[i] == '1')
+		{
+			count++;
+		}
+	}
+	for (int i = 0; i < count; i++)
+	{
+		cout << str[i];
+	}
+	cout << "\n\n";
 }
 
 int main()
 {
 	setlocale(LC_ALL, "ru");
-	StringBit s1;
-	s1.ShowString();
 
 	StringBit stroka1;
 	char *str_bit1 = stroka1.getStr();
 	stroka1.ShowString();
-	//StringBit stroka1(str_bit);
 
 	StringBit stroka2;
 	char *str_bit2 = stroka2.getStr();
-	stroka2.ShowString();
-	//StringBit stroka1(str_bit);
-
-	cout << "Операция присваивания: " << endl;
-	stroka2 = stroka1;
 	stroka2.ShowString();
 
 	cout << "Операция суммирования: " << endl;
@@ -226,16 +278,10 @@ int main()
 	cout << "Операция проверка на равенство: " << endl;
 	stroka1 == stroka2;
 
+	cout << "Операция присваивания: " << endl;
+	stroka1 = stroka2;
+	stroka1.ShowStringPrisv();
 	
-	/*char stroka1[] = "0101";
-	StringBit s2(stroka1);
-	s2.ShowString();
-	char stroka2[] = "001";
-	StringBit s3(stroka2);
-	s3.ShowString();*/
-
-
-
 	system("pause");
 	return 0;
 }
