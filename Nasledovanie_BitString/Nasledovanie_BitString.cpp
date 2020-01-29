@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include <iostream>
-#include <string.h>
+#include <cstring>
+#include <cstdlib>
 
 using namespace std;
 
@@ -13,6 +14,8 @@ public:
 	String();
 	String(char *strLiter);
 	String(char symbol);
+	void setStr(char *strLiter);
+	char * getStr();
 	int GetLength_String();
 	void ClearString();
 	void ShowString();
@@ -21,26 +24,12 @@ public:
 
 String::String()
 {
-	str = new char;
-	str[0] = '\0';
-	length = 0;
+	str = new char('\0');
 }
 
 String::String(char * strLiter)
 {
-	length = strlen(strLiter);
-	char *str = new char[length];
-	for (int i = 0; strLiter[i] != '\0'; i++)
-	{
-		if (strLiter[i] != '0' && strLiter[i] != '1')
-		{
-			strLiter[i] = '0';
-		}
-	}
-	for (int i = 0; i != '\0'; i++)
-	{
-		str[i] = strLiter[i];
-	}
+	str = new char[strlen(strLiter)+1];
 	//strcpy(str, strLiter);
 }
 
@@ -50,6 +39,20 @@ String::String(char symbol)
 	str[0] = symbol;
 	str[1] = '\0';
 	length = 1;
+}
+
+void String::setStr(char * strLiter)
+{
+	str = new char[10];
+	strcpy(str, strLiter);
+}
+
+char * String::getStr()
+{
+	cout << "Введите бинарную строку: ";
+	cin >> str;
+	setStr(str);
+	return str;
 }
 
 int String::GetLength_String()
@@ -66,7 +69,11 @@ void String::ClearString()
 
 void String::ShowString()
 {
-	cout << str << "\n\n";
+	cout <<"Бинарная строка: " << str << "\n";
+	/*for (int i = 0; i != '\0'; i++)
+	{
+		cout << str[i];
+	}*/
 }
 
 String::~String()
@@ -84,12 +91,28 @@ public:
 	StringBit();
 	StringBit(char *strLiter) : String(strLiter)
 	{
-		cout << "Бинарная строка: ";
+		for (int i = 0; strLiter[i] < length; i++)
+		{
+			if (strLiter[i] != '0' && strLiter[i] != '1')
+			{
+				strLiter[i] = '0';
+			}
+			else
+			{
+				str[i] = strLiter[i];
+			}
+		}
+		for (int i = 0; i != '\0'; i++)
+		{
+			cout << str[i];
+		}
 	}
 	~StringBit();
+	
 	char * changeNeg_or_Pos();
-	//StringBit operator = (StringBit & str2);
-	//StringBit operator + (StringBit & str2);
+	StringBit operator = (StringBit & str2); 
+	int SumStr(char * str1, char * str2);
+	bool operator== (StringBit & str2);
 };
 
 StringBit::StringBit()
@@ -131,31 +154,86 @@ char * StringBit::changeNeg_or_Pos()
 	}
 }
 
-/*StringBit StringBit::operator=(StringBit & str2)
+StringBit StringBit::operator=(StringBit & str2)
 {
-	return StringBit();
+	if (strlen(str2.str) > strlen(str))
+	{
+		delete[]str;
+		str = new char[strlen(str2.str) + 1];
+	}
+	//strcpy(str, str2.str);
+	return *this;
 }
 
-StringBit StringBit::operator+(StringBit & str2)
+int StringBit:: SumStr(char * str1, char * str2)
 {
-		if (this == &str2)
-		{
-			return *this;
-		}
-		strcpy(str2.Data());
-		return *this;
+	int temp;
+	int strToint_1 = atoi(str1);
+	int strToint_2 = atoi(str2);
+	int sum1 = 0, sum2 = 0;
+	while (strToint_1)
+	{
+		sum1 += strToint_1 % 10;
+		strToint_1 /= 10;
+	}
+	while (strToint_2)
+	{
+		sum2 += strToint_2 % 10;
+		strToint_2 /= 10;
+	}
+	temp = sum1 + sum2;
+	return temp;
 }
-*/
-StringBit *a;
+
+bool StringBit::operator==(StringBit &str2)
+{
+	if (strcmp(str, str2.str) == 0)
+	{
+		cout << "Строки одинаковы!" << endl;
+		return true;
+	}
+	else
+	{
+		cout << "Cтроки не равны" << endl;
+		return false;
+	}
+}
 
 int main()
 {
 	setlocale(LC_ALL, "ru");
 	StringBit s1;
 	s1.ShowString();
-	char stroka[] = "0101";
-	StringBit s2(stroka);
+
+	StringBit stroka1;
+	char *str_bit1 = stroka1.getStr();
+	stroka1.ShowString();
+	//StringBit stroka1(str_bit);
+
+	StringBit stroka2;
+	char *str_bit2 = stroka2.getStr();
+	stroka2.ShowString();
+	//StringBit stroka1(str_bit);
+
+	cout << "Операция присваивания: " << endl;
+	stroka2 = stroka1;
+	stroka2.ShowString();
+
+	cout << "Операция суммирования: " << endl;
+	StringBit sumStr;
+	sumStr.SumStr(str_bit1, str_bit2);
+
+	cout << "Операция проверка на равенство: " << endl;
+	stroka1 == stroka2;
+
+	
+	/*char stroka1[] = "0101";
+	StringBit s2(stroka1);
 	s2.ShowString();
+	char stroka2[] = "001";
+	StringBit s3(stroka2);
+	s3.ShowString();*/
+
 
 
 	system("pause");
